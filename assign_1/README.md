@@ -40,7 +40,7 @@ Insertion sorting cutoff schemes tended to run a small time faster.
 Here are the different sorting schemes (cartesian product combinations of above choices) and the sorting times from 10,000 to 1,000,000 elements.
 
 Times are the average of a system clock for 100 different arrays. the array contents were repeated for each experiment but different between each other.
-![Times](./qs_times.png)
+![Times](./qs-times.png)
 
 Here are the comparison of average times for each of the 12 sort configurations for 1,000,000elements.
 
