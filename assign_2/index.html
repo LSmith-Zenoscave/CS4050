@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Luke Smith &mdash; Assignment 2</title>
+</head>
+
+<body>
+    <input type="text" am-controller="$search" am-bind="search" am-on-keyup="keyup"></input>
+    <select onchange="changeLang(this);" am-controller="$language" am-for="lang in languages">
+        <option value="{{lang}}">{{lang}}</option>
+    </select>
+    <ol am-controller="$results" am-for="match in matches">
+        <li>{{match}}</li>
+    </ol>
+    <script type="text/javascript" src="mvc.js"></script>
+    <script type="text/javascript" src="trie.js"></script>
+    <script type="text/javascript" src="dict.js"></script>
+    <script type="text/javascript">
+        let changeLang = function(el) {
+            model.$state.language = el.options[el.selectedIndex].value;
+            model.notifyAll();
+        };
+
+
+        let model = new Angstrom.Model({
+            languages: Object.keys(dict_trie),
+            language: 'english',
+            search: '',
+            matches: []
+        });
+
+        let search = new Angstrom.Controller('$search', model, {
+            "$update": function ($state, model) {
+                $state.matches = findWithPrefix($state.search.toLowerCase(), dict_trie[$state.language]).slice(0, 100);
+            },
+            "keyup": function ($state, model, element) {
+                model.$state.search = element.value;
+                model.notifyAll();
+            }
+        });
+
+        let language = new Angstrom.Controller('$language', model, {
+            "$update": function($state, model, elements) {
+                elements.forEach(element => element.selectedIndex = $state.languages.indexOf($state.language));
+            }
+        })
+
+        let results = new Angstrom.Controller('$results', model);
+        model.notifyAll();
+    </script>
+</body>
+
+</html>
