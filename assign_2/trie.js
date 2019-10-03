@@ -15,10 +15,11 @@ function Trie(words) {
     return data;
 }
 
-function findWithPrefix(prefix, trie) {
+function findWithPrefix(prefix, trie, size) {
     var curr = trie;
     var isWord = false;
     var words = [];
+    var count = 0;
 
     if (prefix.length > 0 && !Object.keys(trie).includes(prefix[0])) {
         return [];
@@ -32,13 +33,18 @@ function findWithPrefix(prefix, trie) {
 
     if (isWord) {
         words.push(prefix);
+        count++;
     }
     
     Object.keys(curr).forEach(c => {
-        findWithPrefix(c, curr).forEach(suffix => {
-            words.push(prefix + suffix);
+        findWithPrefix(c, curr, size-count).forEach(suffix => {
+            if (count < size)
+            {
+                words.push(prefix + suffix);
+                count++;
+            }
         });
     });
 
-    return words;
+    return words.slice(0, size);
 }

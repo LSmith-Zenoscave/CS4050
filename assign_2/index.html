@@ -35,7 +35,7 @@
 
         let search = new Angstrom.Controller('$search', model, {
             "$update": function ($state, model) {
-                $state.matches = findWithPrefix($state.search.toLowerCase(), dict_trie[$state.language]).slice(0, 100);
+                $state.matches = findWithPrefix($state.search.toLowerCase(), dict_trie[$state.language], 10);
             },
             "keyup": function ($state, model, element) {
                 model.$state.search = element.value;
