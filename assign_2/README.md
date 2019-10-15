@@ -5,7 +5,7 @@ Basic Prefix search and find.
 
 # To use: 
 
-* Open [index.html](./index.html) in a browser.
+* Open [trie.html](./trie.html) in a browser.
 * Select A language to use. (Loads Dictionary asynchronously so may take a second to compile)
 * Type word prefix in box, tab complete replaces word with the first found matching in the dictionary.
 * Have fun!
