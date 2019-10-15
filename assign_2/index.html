@@ -9,7 +9,8 @@
 </head>
 
 <body>
-    <input type="text" am-controller="$search" am-bind="search" am-on-keyup="keyup"></input>
+    <input type="text" am-controller="$search" am-bind="search" am-on-input="input"
+        onkeydown="tabcomplete(this);"></input>
     <select onchange="changeLang(this);" am-controller="$language" am-for="lang in languages">
         <option value="{{lang}}">{{lang}}</option>
     </select>
@@ -20,11 +21,6 @@
     <script type="text/javascript" src="trie.js"></script>
     <script type="text/javascript" src="dict.js"></script>
     <script type="text/javascript">
-        let changeLang = function(el) {
-            model.$state.language = el.options[el.selectedIndex].value;
-            model.notifyAll();
-        };
-
 
         let model = new Angstrom.Model({
             languages: Object.keys(dict_trie),
@@ -33,18 +29,43 @@
             matches: []
         });
 
+        let tabcomplete = function (el) {
+            let evt = window.event;
+            var code = evt.keyCode;
+            if (code == 9 && model.$state.matches.length > 0) {
+                el.value = model.$state.search = model.$state.matches[0];
+                model.notifyAll();
+                if (evt.preventDefault) {
+                    evt.preventDefault();
+                }
+                else {
+                    evt.returnValue = false;
+                }
+            }
+            console.log(evt);
+        };
+
+        let changeLang = function (el) {
+            model.$state.language = el.options[el.selectedIndex].value;
+            model.notifyAll();
+        };
+
         let search = new Angstrom.Controller('$search', model, {
             "$update": function ($state, model) {
-                $state.matches = findWithPrefix($state.search.toLowerCase(), dict_trie[$state.language], 10);
+                if (typeof dict_trie[$state.language] !== "object") {
+                    dict_trie[$state.language] = new Trie(b64DecodeUnicode(dict_trie[$state.language]).split('\n'));
+                }
+
+                $state.matches = dict_trie[$state.language].findWithPrefix($state.search.toLowerCase(), 10);
             },
-            "keyup": function ($state, model, element) {
+            "input": function ($state, model, element) {
                 model.$state.search = element.value;
                 model.notifyAll();
             }
         });
 
         let language = new Angstrom.Controller('$language', model, {
-            "$update": function($state, model, elements) {
+            "$update": function ($state, model, elements) {
                 elements.forEach(element => element.selectedIndex = $state.languages.indexOf($state.language));
             }
         })
