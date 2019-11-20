@@ -1,5 +1,9 @@
-#!python3 
+#!python3
+import sys
 import random
+from random import sample
+from math import sqrt, ceil
+
 
 def is_prime_miller_rabin(n, k):
     if n == 2 or n == 3:
@@ -7,15 +11,15 @@ def is_prime_miller_rabin(n, k):
     if (n <= 1) or (n % 2 == 0):
         return False
 
-    d = n-1
+    d = n - 1
     rs = [d]
     while d % 2 == 0:
         d >>= 1
         rs.append(d)
 
-    for _ in range(k):
-        a = random.randrange(2, n-1)
-        if any(pow(a, r, n)in [1,n-1] for r in rs):
+    witnesses = range(2, n-1)
+    for a in sample(witnesses, min(k, len(witnesses))):
+        if any(pow(a, r, n) == n - 1 for r in rs) or pow(a,d,n) == 1:
             continue
         return False
     return True
@@ -33,55 +37,79 @@ def is_prime_rand(n, k):
             return False
     return True
 
-def generate(size):
-    primes = {2, 3}
-    composites = {4}
-    p = max(primes)
-    while len(primes|composites) < size-2:
-        cart = set(p*q for p in primes|composites for q in primes|composites)
-        primes |= {c for c in range(2, min(size, 2*p)) if c not in cart}
-        composites |= {c for c in cart if c < min(size, 2*p)}
-        for v in range(2, max(primes)):
-            is_composite = False
-            for c in primes:
-                if v%c == 0 and v not in primes:
-                    is_composite = True
-                    break
-            if is_composite:
-                composites.add(v)
-            else:
-                primes.add(v)
 
-        p = max(primes)
+def is_prime(n):
+    if n in [2, 3, 5]:
+        return True
+
+    if n <= 1 or n % 6 in [0, 2, 3, 4]:
+        return False
+
+    bound_check = int(ceil(sqrt(n)))+6
+    return all((n % (p + 1) != 0 or n == p+1) and n % (p - 1) != 0 for p in range(6, max(7, bound_check), 6))
+
+
+def generate(size):
+    primes = set()
+    composites = set()
+    for n in range(size+1):
+        if is_prime(n):
+            primes.add(n)
+        else:
+            composites.add(n)
     return primes, composites
 
 
-def main():
-    primes, composites = generate(10000)
-    l = len(composites)
-    m = len(primes)
+true = int(True)
+false = int(False)
 
-    for p in range(5):
+
+def accuracy(stats):
+    correct = stats[true][true] + stats[false][false]
+    total_trials = sum(map(sum, stats))
+    return round(correct / total_trials, 3)
+
+
+def precision(stats):
+    predicted_true = (stats[true][true] + stats[false][true])
+    return round(stats[true][true] / predicted_true, 3)
+
+
+def recall(stats):
+    actually_true = sum(stats[true])
+    return round(stats[true][true] / actually_true, 3)
+
+
+def f1_score(stats):
+    pre = precision(stats)
+    rec = recall(stats)
+    return round(2.0 * pre * rec / (pre + rec), 3)
+
+
+def main():
+    primes, composites = generate(100000)
+    print("K,Method,Correct,Incorrect,Accuracy,Precision,Recall,F1")
+    for p in range(1, 5):
         k = 10**p
-        mc = 0
-        mp = 0
-        rc = 0
-        rp = 0
-        for v in primes|composites:
-            mr = is_prime_miller_rabin(v, p+1)
-            rn = is_prime_rand(v, k)
-            if mr and v in primes:
-                mp += 1
-            if not mr and v in composites:
-                mc += 1
-            if rn and v in primes:
-                rp += 1
-            if not rn and v in composites:
-                rc += 1
-        print(f"{p+1},miller-rabin,{mc/l},{l},composite")
-        print(f"{k},random,{rc/l},{l},composite")
-        print(f"{p+1},miller-rabin,{mp/m},{m},prime")
-        print(f"{k},random,{rp/m},{m},prime")
+        stats_miller = [[0, 0], [0, 0]]
+        stats_rand = [[0, 0], [0, 0]]
+        for v in primes | composites:
+            miller_rand_predict = is_prime_miller_rabin(v, p)
+            random_check_predict = is_prime_rand(v, k)
+            stats_miller[int(v in primes)][int(miller_rand_predict)] += 1
+            stats_rand[int(v in primes)][int(random_check_predict)] += 1
+
+        print(f"{k},RandCheck," +
+              f"{stats_rand[true][true] + stats_rand[false][false]}," +
+              f"{stats_rand[true][false] + stats_rand[false][true]}," + 
+              f"{accuracy(stats_rand)},{precision(stats_rand)}," + 
+              f"{recall(stats_rand)},{f1_score(stats_rand)}")
+        
+        print(f"{p},MillerRabin," +
+              f"{stats_miller[true][true] + stats_miller[false][false]}," +
+              f"{stats_miller[true][false] + stats_miller[false][true]}," + 
+              f"{accuracy(stats_miller)},{precision(stats_miller)}," + 
+              f"{recall(stats_miller)},{f1_score(stats_miller)}")
 
 if __name__ == '__main__':
     main()

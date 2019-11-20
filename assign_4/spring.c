@@ -38,9 +38,9 @@ uint128_t hex_strtoulll(const char *nptr, int len) {
 uint128_t glfsr(uint128_t mask, uint128_t *lfsr) {
   uint128_t lsb = (*lfsr) & 1U; /* Get LSB (i.e., the output bit). */
   *lfsr >>= 1;                  /* Shift register */
-  if (lsb) {                      /* If the output bit is 1, */
+  if (lsb) {                    /* If the output bit is 1, */
     *lfsr ^= mask;              /*  apply toggle mask. */
-}
+  }
   return lsb;
 }
 
