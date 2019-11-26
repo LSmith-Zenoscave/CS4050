@@ -1,9 +1,10 @@
+#include <cmath>
 #include <iostream>
 #include <random>
 
 using namespace std;
 
-auto main(int argc, char *argv[]) -> int {
+int main(int argc, char *argv[]) {
   if (argc < 2) {
     cerr << "Usage: " << argv[0] << " <trails>";
     exit(EXIT_FAILURE);
@@ -18,11 +19,10 @@ auto main(int argc, char *argv[]) -> int {
   for (int i = 0; i < total; i++) {
     double x = dist(e);
     double y = dist(e);
-    if (x * x + y * y <= 1) {
+    if (hypot(x, y) <= 1) {
       inside++;
     }
   }
-  cerr << inside << endl;
   cout << "Affter " << total << " trials, Pi is probably ~"
        << (4.0 * static_cast<double>(inside)) / total << endl;
 }

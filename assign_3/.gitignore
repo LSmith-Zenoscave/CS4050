@@ -1,3 +1,6 @@
 monte_carlo
 pi_prob
 search_prob
+prime_prob
+prime_gen
+callgrind*

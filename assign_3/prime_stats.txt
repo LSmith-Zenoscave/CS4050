@@ -1,0 +1,12 @@
+Tests for numbers [0, 1000)
+Method,K,Correct,Incorrect,Accuracy,Precision,Recall,F1
+MillerRabin,1,996,4,0.996,0.976744,1,0.988235
+MillerRabin,2,1000,0,1,1,1,1
+MillerRabin,3,1000,0,1,1,1,1
+MillerRabin,4,1000,0,1,1,1,1
+RandomCheck,10,310,690,0.31,0.195804,1,0.327485
+RandomCheck,100,715,285,0.715,0.370861,1,0.541063
+RandomCheck,1000,986,14,0.986,0.923077,1,0.96
+RandomCheck,10000,1000,0,1,1,1,1
+Found the first 10,000,000 primes ending with 179,424,673 in 48,975ms.
+Found the first 100,000,000 primes ending with 2,038,074,853 in 603,155ms.
