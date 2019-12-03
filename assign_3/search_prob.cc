@@ -3,7 +3,7 @@
 
 using namespace std;
 
-auto main(int /*argc*/, char * /*argv*/[]) -> int {
+auto main(int /*argc*/, char * /*argv*/ []) -> int {
   srand(time(nullptr));
   int arr[1000];
   int comparisons = 0;
