@@ -139,4 +139,6 @@
                100)))
   (display "\n"))
 
-(display (length (map show-route (sort arbitrage (lambda (l r) (> (cost l) (cost r)))))))
+(define sorted (sort arbitrage (lambda (l r) (> (cost l) (cost r)))))
+; Display length to consume (repeat #<void>) from map of display calls
+(display (length (map show-route sorted)))
