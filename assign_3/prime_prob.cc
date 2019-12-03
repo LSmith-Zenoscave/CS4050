@@ -122,7 +122,8 @@ std::array<double, 7> stats(size_t stats[2][2], int checks) {
   double accuracy = correct / total;
   double precision =
       stats[1][1] / static_cast<double>(stats[1][1] + stats[0][1]);
-  double recall = stats[1][1] / static_cast<double>(stats[1][1] + stats[1][0]);
+  double recall =
+      stats[1][1] / static_cast<double>(stats[1][1] + stats[1][0]);
   double f1score = 2 * precision * recall / (precision + recall);
 
   return std::array<double, 7>{static_cast<double>(checks),
@@ -194,7 +195,8 @@ int main(int argc, char *argv[]) {
     }
   }
   auto time = steady_clock::now() - start;
-  std::cout << "Found the first " << count << " primes ending with " << n - 1
-            << " in " << duration_cast<milliseconds>(time).count() << "ms."
+  std::cout << "Found the first " << count << " primes ending with "
+            << n - 1 << " in "
+            << duration_cast<milliseconds>(time).count() << "ms."
             << std::endl;
 }

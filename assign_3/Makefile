@@ -44,10 +44,10 @@ list_sources: ## show what sources will be compiled
 
 %:%.c
 	clang-tidy -checks="modernize-*;llvm-*" -fix $<
-	clang-format -i $<
+	clang-format --style="{ColumnLimit: 74}" -i $<
 	$(CC) $(FLAGS) $(CFLAGS) $(LFLAGS) -o $@ $< $(LIBS)
 
 %:%.cc
 	clang-tidy -checks="modernize-*;llvm-*" -fix $<
-	clang-format -i $<
+	clang-format --style="{ColumnLimit: 74}" -i $<
 	$(CXX) $(FLAGS) $(CXXFLAGS) $(LFLAGS) -o $@ $< $(LIBS)

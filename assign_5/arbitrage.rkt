@@ -8,9 +8,9 @@
 (define snd cadr)
 (define trd caddr)
 
-;; ===========================================================================
+;; =======================================================================
 ;; Basic utility functions
-;; ===========================================================================
+;; =======================================================================
 
 (define (zip lists)
   ; zips lists together.
@@ -61,23 +61,24 @@
     (else                  (max-by-acc func (cdr lst) threshold value))))
 
 
-;; ===========================================================================
+;; =======================================================================
 ;; Actual search done below.
-;; ===========================================================================
+;; =======================================================================
 
 (define edges
   (map (lambda (line)
-         ; edge is read in the form "<vertex_from>\t<vertex_dest>\t<weight>"
+         ; edge is read in the form "<vertex_from>\t<vertex_to>\t<weight>"
          (define tokens (string-split line "\t" #:trim? #t))
          ; transform only third element (weight) to float/number
          (list (fst tokens) (snd tokens) (string->number (trd tokens))))
-       (cdr (file->lines "./arbitrage.txt")))) ; trim off the '9'. not used.
+       ; trim off the '9'. not used.
+       (cdr (file->lines "./arbitrage.txt"))))
 
 (define vertices
   ; remove edge weights from edges and flatten. take unique values.
   (remove-duplicates
    (flatten
-    ;removes each edge weight from each edge, leaving only vertices in list
+    ;removes each edge weight from each edge, leaving only vertices
     (map (lambda (edge) (list (fst edge) (snd edge)))
          edges))))
 
@@ -139,6 +140,8 @@
                100)))
   (display "\n"))
 
+; sort arbitrage in non-increasing order of exchange round-trip
 (define sorted (sort arbitrage (lambda (l r) (> (cost l) (cost r)))))
+
 ; Display length to consume (repeat #<void>) from map of display calls
 (display (length (map show-route sorted)))

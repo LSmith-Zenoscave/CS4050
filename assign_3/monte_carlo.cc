@@ -25,8 +25,8 @@ auto randrange(double min, double max) -> double {
 // f(x) = sin(1/x)
 auto fx(double x) -> double { return sin(1.0 / x); }
 
-auto mc_avg_integrate(unary_real_func f, double a, double b, int64_t samples)
-    -> double {
+auto mc_avg_integrate(unary_real_func f, double a, double b,
+                      int64_t samples) -> double {
   double sum = 0.0;
   for (int i = 0; i < samples; i++) {
     double x = randrange(a, b);
@@ -35,8 +35,8 @@ auto mc_avg_integrate(unary_real_func f, double a, double b, int64_t samples)
   return (b - a) * (sum / samples);
 }
 
-auto mc_bound_integrate(unary_real_func f, double a, double b, int64_t samples)
-    -> double {
+auto mc_bound_integrate(unary_real_func f, double a, double b,
+                        int64_t samples) -> double {
   double min_y = HUGE_VAL_F64;
   double max_y = -HUGE_VAL_F64;
   double curr;
@@ -60,14 +60,15 @@ auto mc_bound_integrate(unary_real_func f, double a, double b, int64_t samples)
   return (b - a) * (max_y - min_y) * inside / samples;
 }
 
-auto trapezoid_integrate(unary_real_func f, double a, double b, int64_t samples)
-    -> double {
+auto trapezoid_integrate(unary_real_func f, double a, double b,
+                         int64_t samples) -> double {
   double delta = (b - a) / samples;
   double area = 0;
   double last = f(a);
   double curr;
   for (int i = 1; i <= samples; i++) {
-    curr = f(a + i * delta), area += (curr + last) * delta / 2.0, last = curr;
+    curr = f(a + i * delta), area += (curr + last) * delta / 2.0,
+    last = curr;
   }
   return area;
 }
@@ -79,9 +80,10 @@ auto main(int argc, char *argv[]) -> int {
   }
 
   int64_t samples = strtol(argv[1], nullptr, INT_RADIX_BASE);
-  std::cout << "Using " << samples
-            << " samples for integration from 0 to 100 of f(x) = sin(1/x) by: "
-            << std::endl;
+  std::cout
+      << "Using " << samples
+      << " samples for integration from 0 to 100 of f(x) = sin(1/x) by: "
+      << std::endl;
   std::cout << "Expected is ~5.027962." << std::endl;
   std::cout << "Trapezoidal Rule: "
             << trapezoid_integrate(fx, 0.0, 100.0, samples) << std::endl;

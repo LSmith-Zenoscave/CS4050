@@ -8,11 +8,11 @@ uint64_t mulmod64(uint64_t a, uint64_t b, uint64_t c) {
   uint64_t d; /* to hold the result of a*b mod c */
 
   /* calculates a*b mod c, stores result in d */
-  asm("mov %1, %%rax;"         /* put a into rax */
-      "mul %2;"                /* mul a*b -> rdx:rax */
-      "div %3;"                /* (a*b)/c -> quot in rax remainder in rdx */
-      "mov %%rdx, %0;"         /* store result in d */
-      : "=r"(d)                /* output */
+  asm("mov %1, %%rax;" /* put a into rax */
+      "mul %2;"        /* mul a*b -> rdx:rax */
+      "div %3;"        /* (a*b)/c -> quot in rax remainder in rdx */
+      "mov %%rdx, %0;" /* store result in d */
+      : "=r"(d)        /* output */
       : "r"(a), "r"(b), "r"(c) /* input */
       : "%rax", "%rdx"         /* clobbered registers */
   );
@@ -53,7 +53,8 @@ inline bool is_prime(uint64_t n) {
     s++;
   }
 
-  // These witnesses are sufficient for detirmining all primes less than 2^64.
+  // These witnesses are sufficient for detirmining all primes less than
+  // 2^64.
   uint64_t witnesses[7]{2, 325, 9375, 28178, 450775, 9780504, 1795265022};
 
   for (int w = 0; w < 7; w++) {
@@ -138,6 +139,6 @@ int main(int argc, char *argv[]) {
   }
   auto time = steady_clock::now() - start;
   std::cout << "Found the first " << count << " primes ending at " << n
-            << " in " << duration_cast<milliseconds>(time).count() << "ms."
-            << std::endl;
+            << " in " << duration_cast<milliseconds>(time).count()
+            << "ms." << std::endl;
 }
