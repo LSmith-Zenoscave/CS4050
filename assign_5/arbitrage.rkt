@@ -81,6 +81,13 @@
     (map (lambda (edge) (list (fst edge) (snd edge)))
          edges))))
 
+(define start
+ (if (member "Dollar" vertices)
+     "Dollar" 
+     (car vertices)))
+
+(define rest (remove start vertices))
+
 
 (define all-edges
   ; join all edges with their reciprocal weighted dual edges
@@ -104,16 +111,32 @@
           ; rotate list by one and zip with self to form edge pairs
           (zip (list path (append (cdr path) (list (car path)))))))) 
 
-(define arbitrage
- (max-by cost 
-         ; only tests combinations (drop outs) of at least length 2 (vertices)
-         (filter (lambda (combo) (> (length combo) 1))
-                 ; only tests combinations (drop outs) of best permutation
-                 ; results in close to optimal answers in O(n!).
-                 ; checking all possible permuted combos takes O(2^(n!))
-                 (combinations (max-by cost (permutations vertices))))))
+(define (rest-cost r)
+  ; finds cost given a fixed start and an input of the rest of the cycle.
+  (cost (cons start r)))
 
-(display arbitrage)
-(display " --> ")
-(unless (equal? #f arbitrage) (display (cost arbitrage)))
-(display "\n")
+(define arbitrage
+ ; Adds the start back on
+ (map (lambda (r) (cons start r))
+      ; finds all successful arbitrage.
+      (filter (lambda (r) (> (rest-cost r) 1))
+              ; (apply append x) is like flattening append one level.
+              (apply append (map permutations
+                           ; find non-nil tail cycles
+                           ; (must do at least a trade before finishing)
+                           (filter (lambda (combo) (not (null? combo)))
+                                   (combinations rest)))))))
+
+(define (show-route route)
+  (map (lambda (node) 
+        (display node) 
+        (display " --> "))
+       route)
+  (unless (equal? #f route)
+          (display 
+            (/ (round
+                 (* (cost route) 100000))
+               100)))
+  (display "\n"))
+
+(display (length (map show-route (sort arbitrage (lambda (l r) (> (cost l) (cost r)))))))
