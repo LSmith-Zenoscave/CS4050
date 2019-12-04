@@ -3,11 +3,14 @@
 
 using namespace std;
 
+constexpr int trials = 10000;
+
 auto main(int /*argc*/, char * /*argv*/ []) -> int {
   srand(time(nullptr));
   int arr[1000];
+  int successful = 0;
   int comparisons = 0;
-  for (int t = 0; t < 100; t++) {
+  for (int t = 0; t < trials; t++) {
     for (int &i : arr) {
       i = rand();
     }
@@ -17,11 +20,14 @@ auto main(int /*argc*/, char * /*argv*/ []) -> int {
       int guess_idx = rand() % 1000;
       comparisons++;
       if (arr[guess_idx] == s) {
+        successful++;
         break;
       }
     }
   }
 
-  cout << "Affter 100 trials of 1000 numbers, searching takes "
-       << comparisons / 100.0 << " comparisons" << endl;
+  cout << "Affter " << trials << " trials of 1000 numbers, " << successful
+       << " were successful. searching takes "
+       << comparisons / float(successful)
+       << " comparisons on average when successful" << endl;
 }

@@ -3,4 +3,5 @@ pi_prob
 search_prob
 prime_prob
 prime_gen
+random_n_queens
 callgrind*

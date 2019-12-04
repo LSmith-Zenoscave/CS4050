@@ -43,11 +43,11 @@ list_sources: ## show what sources will be compiled
 	@echo "The found sources are: $(SOURCES)"
 
 %:%.c
-	clang-tidy -checks="modernize-*;llvm-*" -fix $<
+	clang-tidy -checks="modernize-*;llvm-*" -fix -fix-errors $<
 	clang-format --style="{ColumnLimit: 74}" -i $<
 	$(CC) $(FLAGS) $(CFLAGS) $(LFLAGS) -o $@ $< $(LIBS)
 
 %:%.cc
-	clang-tidy -checks="modernize-*;llvm-*" -fix $<
+	clang-tidy -checks="modernize-*;llvm-*" -fix -fix-errors $<
 	clang-format --style="{ColumnLimit: 74}" -i $<
 	$(CXX) $(FLAGS) $(CXXFLAGS) $(LFLAGS) -o $@ $< $(LIBS)
