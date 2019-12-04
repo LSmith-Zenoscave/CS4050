@@ -84,7 +84,7 @@ public:
     }
 
     for (auto &ext : problem.extensions(candidate)) {
-      std::insert(std::end(solutions), std::begin(ext), std::end(ext));
+      std::inserter(std::end(solutions), std::begin(ext), std::end(ext));
     }
 
     return solutions;
@@ -197,7 +197,7 @@ public:
 
 /**
  * @brief Stopwatch with timer for process functions
- * @tparam Clock the system clock to use for timing resolutions. 
+ * @tparam Clock the system clock to use for timing resolutions.
  */
 template <typename Clock = std::chrono::steady_clock> class stopwatch {
   typename Clock::time_point last_;
@@ -216,7 +216,7 @@ public:
     return Clock::now() - last_;
   }
 
-  /** 
+  /**
    * @brief returns elapsed time and resets stopwatch.
    * @returns elapsed stopwatch time of tick.
    */
@@ -284,7 +284,7 @@ int find_random(int start_count) {
 void solve_proc(void *args) { find_random(*(int *)args); }
 
 int main(int /*argc*/, char * /*argv*/ []) {
-  using clock = std::chrono:steady_clock
+  using clock = std::chrono::steady_clock;
   stopwatch<clock> sw;
 
   clock::duration best;
@@ -298,8 +298,7 @@ int main(int /*argc*/, char * /*argv*/ []) {
               << std::endl;
   }
 
-  std:: cout << "fastest attempt took "
-             << duraction_cast<std::chrono::microseconds>(best).count()
-             << " when timed."
-             << std::endl;
+  std::cout << "fastest attempt took "
+            << duration_cast<std::chrono::microseconds>(best).count()
+            << " when timed." << std::endl;
 }
