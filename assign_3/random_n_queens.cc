@@ -5,12 +5,12 @@
 #include <vector>
 
 /*
-==========================================================================
+=========================================================================
 Back tracking solutions and classes for NQueens problem
-==========================================================================
+=========================================================================
 */
 
-// Used to denote a piece not placed in the column, yet.
+// Used to denote a piece not placed in the column, yet
 constexpr long UNKNOWN = -1;
 
 using namespace std::chrono;
@@ -19,38 +19,38 @@ using namespace std::chrono;
 using process = void (*)(void *);
 
 /**
- * @brief Abstract base class for problems solved via backtracking.
- * @tparam C representation type of a partial solution to the problem.
+ * @brief Abstract base class for problems solved via backtracking
+ * @tparam C representation type of a partial solution to the problem
  */
 template <typename C> class SearchProblem {
 public:
   /**
-   * @brief reject checks for possibility of extending `candidate`.
-   * @note A search problem is brute-forced if reject only returns false.
-   * @param candidate the (partial) solution to check for rejection.
-   * @returns `true` only if no solutions can be extended from `candidate`
+   * @brief reject checks for possibility of extending `candidate`
+   * @note A search problem is brute-forced if reject only returns false
+   * @param candidate the (partial) solution to check for rejection
+   * @returns `true` if no solutions can be extended from `candidate`
    */
   virtual bool reject(C candidate) = 0;
 
   /**
-   * @brief accept checks for completeness and validity of `candidate`.
-   * @note CSPs with a reject function only need to check completeness.
-   * @param candidate the solution to check for acceptance.
-   * @returns `true` only if `candidate` is completely defined and valid.
+   * @brief accept checks for completeness and validity of `candidate`
+   * @note CSPs with a reject function only need to check completeness
+   * @param candidate the solution to check for acceptance
+   * @returns `true` only if `candidate` is completely defined and valid
    */
   virtual bool accept(C candidate) = 0;
 
   /**
-   * @brief extensions creates extensions of the problem from `candidate`.
-   * @param candidate the solution used to extend the search space.
+   * @brief extensions creates extensions of the problem from `candidate`
+   * @param candidate the solution used to extend the search space
    */
   virtual std::vector<C> extensions(C candidate) = 0;
 };
 
 /**
- * @brief Backtracking search problem solver framework.
- * @tparam T Subclass of `SearchProblem<C>`. represents the solver.
- * @tparam C renresptantion of solutions in the search space.
+ * @brief Backtracking search problem solver framework
+ * @tparam T Subclass of `SearchProblem<C>`. represents the solver
+ * @tparam C renresptantion of solutions in the search space
  */
 template <class T, typename C> class Backtrack {
 private:
@@ -58,7 +58,7 @@ private:
 
 public:
   /**
-   * @brief constructor only needs typecheck T against SearchProblem<C>.
+   * @brief constructor only needs typecheck T against SearchProblem<C>
    */
   Backtrack() {
     static_assert(
@@ -68,8 +68,8 @@ public:
   }
 
   /**
-   * @brief finds all solutions from a starting candidate.
-   * @param candidate (partial) solution to base as search starting point.
+   * @brief finds all solutions from a starting candidate
+   * @param candidate (partial) solution to base as search starting point
    * @returns all solutions that extend `candidate`
    */
   std::vector<C> solutions(C candidate) {
@@ -91,11 +91,11 @@ public:
   }
 
   /**
-   * @brief finds first (possibly null) solution extension to `candidate`.
-   * @note Similar to BFS or Beam-search 'eqsue searches.
+   * @brief finds first (possibly null) solution extension to `candidate`
+   * @note Similar to BFS or Beam-search-eqsue searches
    * @param solution the reference to the found solution
-   * @param candidate the starting solution to for searching start point.
-   * @returns true if and only if solution is found, otherwise, false.
+   * @param candidate the starting solution to for searching start point
+   * @returns true if and only if solution is found, otherwise, false
    */
   bool first(C &solution, C candidate) {
     if (problem.reject(candidate)) {
@@ -119,34 +119,34 @@ public:
 
 /**
  * @brief NQueens search problem - CSP of finding positions on a grid
- * @tparam N the square dimension (`N` x `N`) size of the grid/chessboard.
+ * @tparam N the square dimension (`N` x `N`) size of the grid/chessboard
  */
 template <long N> class NQueens : SearchProblem<std::array<long, N>> {
   using Candidate = std::array<long, N>;
 
 public:
   /**
-   * @brief reject placements where any positioned queen can take another.
-   * @note pieces can take others diagonally only when ( |dx| == |dy| ).
+   * @brief reject placements where any positioned queen can take another
+   * @note pieces can take others diagonally only when ( |dx| == |dy| )
    */
   bool reject(Candidate candidate) {
 
-    /// @note can be reduced to checking only first empty index (CNF-CSP).
+    /// @note can be reduced to checking only first empty index (CNF-CSP)
     for (int idx = 0; idx < N; idx++) {
-      // If the current index is not filled we have validated everything.
+      // If the current index is not filled we have validated everything
       if (candidate.at(idx) == UNKNOWN) {
         return false;
       }
 
-      // Check against every previous index.
+      // Check against every previous index
       for (int comp = 0; comp < idx; comp++) {
-        /// @note assumes no pieces are placed on same rank.
+        /// @note assumes no pieces are placed on same rank
         // checks for same file between two pieces
         if (candidate.at(idx) == candidate.at(comp)) {
           return true;
         }
 
-        // checks for diagonal takes.
+        // checks for diagonal takes
         if (std::abs(candidate.at(idx) - candidate.at(comp)) ==
             std::abs(idx - comp)) {
           return true;
@@ -157,30 +157,30 @@ public:
   }
 
   /**
-   * @brief checks for complete solutions.
-   * @note no validity checks are done. Fails if start candidate is full.
-   * @param candidate the candidate to check for valid complete solution.
-   * @returns true if `candidate` has all needed pieces, otherwise, false.
+   * @brief checks for complete solutions
+   * @note no validity checks are done. Fails if start candidate is full
+   * @param candidate the candidate to check for valid complete solution
+   * @returns true if `candidate` has all needed pieces, otherwise, false
    */
   bool accept(Candidate candidate) {
     return (candidate.at(N - 1) != UNKNOWN);
   }
 
   /**
-   * @brief gives all extensions by adding a queen to the next empty rank.
-   * @param candidate partial candidate from which to base extensions.
-   * @returns all 1-piece extensions if there is an empty rank, else, nil.
+   * @brief gives all extensions by adding a queen to the next empty rank
+   * @param candidate partial candidate from which to base extensions
+   * @returns all 1-piece extensions if there is an empty rank, else, nil
    */
   std::vector<Candidate> extensions(Candidate candidate) {
     std::vector<Candidate> extension_set{};
 
-    // First empty rank.
+    // First empty rank
     int idx = 0;
     for (; idx < N && candidate.at(idx) != UNKNOWN; idx++) {
       /* DO NOTHING... just increment idx until empty rank found. */
     }
 
-    // No more extensions needed. Stop search.
+    // No more extensions needed. Stop search
     if (idx == N)
       return extension_set;
 
@@ -197,7 +197,7 @@ public:
 
 /**
  * @brief Stopwatch with timer for process functions
- * @tparam Clock the system clock to use for timing resolutions.
+ * @tparam Clock the system clock to use for timing resolutions
  */
 template <typename Clock = std::chrono::steady_clock> class stopwatch {
   typename Clock::time_point last_;
@@ -209,16 +209,16 @@ public:
   void reset() { last_ = Clock::now(); }
 
   /**
-   * @brief gives elapsed duration since last reset or construction.
-   * @returns stopwatch time elapsed as `Clock::duration`.
+   * @brief gives elapsed duration since last reset or construction
+   * @returns stopwatch time elapsed as `Clock::duration`
    */
   typename Clock::duration elapsed() const {
     return Clock::now() - last_;
   }
 
   /**
-   * @brief returns elapsed time and resets stopwatch.
-   * @returns elapsed stopwatch time of tick.
+   * @brief returns elapsed time and resets stopwatch
+   * @returns elapsed stopwatch time of tick
    */
   typename Clock::duration tick() {
     auto now = Clock::now();
@@ -228,12 +228,12 @@ public:
   }
 
   /**
-   * @brief runs trials of processes. similar to python3 -m timeit module.
+   * @brief runs trials of processes. similar to python3 -m timeit module
    * @param trials How many trials to run the repeated process
-   * @param loops number of looped repitions per time trial.
+   * @param loops number of looped repitions per time trial
    * @param proc the process/function to run in a trial
-   * @param process_args the arguments to pass to the process each time.
-   * @returns fastest/minimal time taken by one trial of the trials done.
+   * @param process_args the arguments to pass to the process each time
+   * @returns fastest/minimal time taken by one trial of the trials done
    */
   typename Clock::duration timeit(long trials, long loops, process proc,
                                   void *process_args) {
@@ -242,7 +242,7 @@ public:
     for (int trial = 0; trial < trials; trial++) {
       reset();
 
-      // repeatedly run proc. ignore result for timing.
+      // repeatedly run proc. ignore result for timing
       for (int loop = 0; loop < loops; loop++)
         proc(process_args);
 
@@ -258,9 +258,9 @@ public:
 };
 
 /**
- * @brief finds a solution to NQueens based off random  starting point.
+ * @brief finds a solution to NQueens based off random  starting point
  * @param start_count number of pieces to randomly place as start
- * @returns number of attempts of randomly placing pieces before success.
+ * @returns number of attempts of randomly placing pieces before success
  */
 int find_random(int start_count) {
   using eight_queens = std::array<long, 8>;
@@ -288,12 +288,12 @@ int main(int /*argc*/, char * /*argv*/ []) {
   stopwatch<clock> sw;
 
   clock::duration best;
-  for (int start_count = 0; start_count < 8; start_count++) {
-    std::cout << start_count << " random pieces placed..." << std::endl;
+  for (int count = 0; count < 8; count++) {
+    std::cout << count << " random pieces placed..." << std::endl;
 
-    best = min(best, sw.timeit(10, 10, solve_proc, (void *)&start_count));
+    best = min(best, sw.timeit(10, 10, solve_proc, (void *)&count));
 
-    std::cout << find_random(start_count)
+    std::cout << find_random(count)
               << " attempts before successful random initialization"
               << std::endl;
   }

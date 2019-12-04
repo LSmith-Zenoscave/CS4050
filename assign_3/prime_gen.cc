@@ -55,7 +55,8 @@ inline bool is_prime(uint64_t n) {
 
   // These witnesses are sufficient for detirmining all primes less than
   // 2^64.
-  uint64_t witnesses[7]{2, 325, 9375, 28178, 450775, 9780504, 1795265022};
+  uint64_t witnesses[7]{2,      325,     9375,      28178,
+                        450775, 9780504, 1795265022};
 
   for (int w = 0; w < 7; w++) {
     uint64_t a = witnesses[w];

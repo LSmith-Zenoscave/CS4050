@@ -26,8 +26,8 @@ auto main(int /*argc*/, char * /*argv*/ []) -> int {
     }
   }
 
-  cout << "Affter " << trials << " trials of 1000 numbers, " << successful
-       << " were successful. searching takes "
+  cout << "Affter " << trials << " trials of 1000 numbers, "
+       << successful << " were successful. searching takes "
        << comparisons / float(successful)
        << " comparisons on average when successful" << endl;
 }
